@@ -22,6 +22,9 @@ task buildSharedObject {
 
     doLast {
         exec {
+            commandLine 'git', 'submodule', 'update', '--init', '--recursive'
+        }
+        exec {
             commandLine "./build.py", "-o", "libjava-tree-sitter", "grammars/tree-sitter-java"
         }
     }
