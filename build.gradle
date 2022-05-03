@@ -2,6 +2,7 @@ plugins {
     id "java-library"
     id "maven-publish"
     id "com.jfrog.bintray" version "1.8.5"
+    id "application"
 }
 
 group = "ai.serenade"
@@ -21,7 +22,7 @@ task buildSharedObject {
 
     doLast {
         exec {
-            commandLine "./build.py", "libjava-tree-sitter", "src/test/tree-sitter-python"
+            commandLine "./build.py", "-o", "libjava-tree-sitter", "grammars/tree-sitter-java"
         }
     }
 }
@@ -67,10 +68,18 @@ bintray {
 }
 
 test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
+    // useJUnitPlatform()
+    // testLogging {
+    //     events "passed", "skipped", "failed"
+    // }
+    //
+    // environment "JAVA_TREE_SITTER", "${project.projectDir.toString()}/libjava-tree-sitter.so"
+}
 
-    environment "JAVA_TREE_SITTER", "${project.projectDir.toString()}/libjava-tree-sitter.so"
+ext {
+   javaMainClass = "ai.serenade.treesitter.App"
+}
+
+application {
+    mainClassName = javaMainClass
 }
