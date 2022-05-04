@@ -89,6 +89,14 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserParseBytes
 
 /*
  * Class:     ai_serenade_treesitter_TreeSitter
+ * Method:    treeEdit
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     ai_serenade_treesitter_TreeSitter
  * Method:    treeCursorNew
  * Signature: (Lai/serenade/treesitter/Node;)J
  */

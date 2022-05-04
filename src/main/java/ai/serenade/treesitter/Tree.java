@@ -15,4 +15,8 @@ public class Tree implements AutoCloseable {
   public Node getRootNode() {
     return TreeSitter.treeRootNode(pointer);
   }
+
+  public void edit() {
+      TreeSitter.treeEdit(pointer);
+  }
 }

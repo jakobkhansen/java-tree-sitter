@@ -22,6 +22,8 @@ public class TreeSitter {
 
   public static native long parserParseBytes(long parser, byte[] source, int length);
 
+  public static native void treeEdit(long tree);
+
   public static native long treeCursorNew(Node node);
 
   public static native TreeCursorNode treeCursorCurrentTreeCursorNode(long cursor);

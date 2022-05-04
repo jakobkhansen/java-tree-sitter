@@ -84,15 +84,16 @@ jobject _marshalNode(JNIEnv* env, TSNode node) {
 }
 
 TSNode _unmarshalNode(JNIEnv* env, jobject javaObject) {
-  return (TSNode){
-      {
-          (uint32_t)env->GetIntField(javaObject, _nodeContext0Field),
-          (uint32_t)env->GetIntField(javaObject, _nodeContext1Field),
-          (uint32_t)env->GetIntField(javaObject, _nodeContext2Field),
-          (uint32_t)env->GetIntField(javaObject, _nodeContext3Field),
-      },
-      (const void*)env->GetLongField(javaObject, _nodeIdField),
-      (const TSTree*)env->GetLongField(javaObject, _nodeTreeField)};
+  return (TSNode) {
+    {
+      (uint32_t)env->GetIntField(javaObject, _nodeContext0Field),
+      (uint32_t)env->GetIntField(javaObject, _nodeContext1Field),
+      (uint32_t)env->GetIntField(javaObject, _nodeContext2Field),
+      (uint32_t)env->GetIntField(javaObject, _nodeContext3Field),
+    },
+    (const void*)env->GetLongField(javaObject, _nodeIdField),
+    (const TSTree*)env->GetLongField(javaObject, _nodeTreeField)
+  };
 }
 
 jobject _marshalTreeCursorNode(JNIEnv* env, TreeCursorNode node) {
@@ -107,18 +108,18 @@ jobject _marshalTreeCursorNode(JNIEnv* env, TreeCursorNode node) {
 }
 
 JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeChild(
-    JNIEnv* env, jclass self, jobject node, jint child) {
+  JNIEnv* env, jclass self, jobject node, jint child) {
   return _marshalNode(
-      env, ts_node_child(_unmarshalNode(env, node), (uint32_t)child));
+           env, ts_node_child(_unmarshalNode(env, node), (uint32_t)child));
 }
 
 JNIEXPORT jint JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeChildCount(
-    JNIEnv* env, jclass self, jobject node) {
+  JNIEnv* env, jclass self, jobject node) {
   return (jint)ts_node_child_count(_unmarshalNode(env, node));
 }
 
 JNIEXPORT jstring JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeString(
-    JNIEnv* env, jclass self, jobject node) {
+  JNIEnv* env, jclass self, jobject node) {
   char* nodeString = ts_node_string(_unmarshalNode(env, node));
   jstring result = env->NewStringUTF(nodeString);
   free(nodeString);
@@ -126,17 +127,17 @@ JNIEXPORT jstring JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeString(
 }
 
 JNIEXPORT jint JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeEndByte(
-    JNIEnv* env, jclass self, jobject node) {
+  JNIEnv* env, jclass self, jobject node) {
   return (jint)ts_node_end_byte(_unmarshalNode(env, node)) / 2;
 }
 
 JNIEXPORT jint JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeStartByte(
-    JNIEnv* env, jclass self, jobject node) {
+  JNIEnv* env, jclass self, jobject node) {
   return (jint)ts_node_start_byte(_unmarshalNode(env, node)) / 2;
 }
 
 JNIEXPORT jstring JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeType(
-    JNIEnv* env, jclass self, jobject node) {
+  JNIEnv* env, jclass self, jobject node) {
   const char* type = ts_node_type(_unmarshalNode(env, node));
   jstring result = env->NewStringUTF(type);
   return result;
@@ -148,35 +149,42 @@ Java_ai_serenade_treesitter_TreeSitter_parserNew(JNIEnv* env, jclass self) {
 }
 
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_parserDelete(
-    JNIEnv* env, jclass self, jlong parser) {
+  JNIEnv* env, jclass self, jlong parser) {
   ts_parser_delete((TSParser*)parser);
 }
 
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_parserSetLanguage(
-    JNIEnv* env, jclass self, jlong parser, jlong language) {
+  JNIEnv* env, jclass self, jlong parser, jlong language) {
   ts_parser_set_language((TSParser*)parser, (TSLanguage*)language);
 }
 
 JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserParseBytes(
-    JNIEnv* env, jclass self, jlong parser, jbyteArray source_bytes,
-    jint length) {
+  JNIEnv* env, jclass self, jlong parser, jbyteArray source_bytes,
+  jint length) {
   jbyte* source = env->GetByteArrayElements(source_bytes, NULL);
   jlong result = (jlong)ts_parser_parse_string_encoding(
-      (TSParser*)parser, NULL, reinterpret_cast<const char*>(source), length, TSInputEncodingUTF16);
+                   (TSParser*)parser, NULL, reinterpret_cast<const char*>(source), length, TSInputEncodingUTF16);
   env->ReleaseByteArrayElements(source_bytes, source, JNI_ABORT);
   return result;
 }
 
+JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit(
+    JNIEnv* env, jclass self, jlong tree
+) {
+
+  return;
+}
+
 JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_treeCursorNew(
-    JNIEnv* env, jclass self, jobject node) {
+  JNIEnv* env, jclass self, jobject node) {
   TSTreeCursor* cursor =
-      new TSTreeCursor(ts_tree_cursor_new(_unmarshalNode(env, node)));
+    new TSTreeCursor(ts_tree_cursor_new(_unmarshalNode(env, node)));
   return (jlong)cursor;
 }
 
 JNIEXPORT jstring JNICALL
 Java_ai_serenade_treesitter_TreeSitter_treeCursorCurrentFieldName(
-    JNIEnv* env, jclass self, jlong cursor) {
+  JNIEnv* env, jclass self, jlong cursor) {
   const char* name = ts_tree_cursor_current_field_name((TSTreeCursor*)cursor);
   jstring result = env->NewStringUTF(name);
   return result;
@@ -184,54 +192,56 @@ Java_ai_serenade_treesitter_TreeSitter_treeCursorCurrentFieldName(
 
 JNIEXPORT jobject JNICALL
 Java_ai_serenade_treesitter_TreeSitter_treeCursorCurrentNode(JNIEnv* env,
-                                                             jclass self,
-                                                             jlong cursor) {
+    jclass self,
+    jlong cursor) {
   return _marshalNode(env, ts_tree_cursor_current_node((TSTreeCursor*)cursor));
 }
 
 JNIEXPORT jobject JNICALL
 Java_ai_serenade_treesitter_TreeSitter_treeCursorCurrentTreeCursorNode(
-    JNIEnv* env, jclass self, jlong cursor) {
+  JNIEnv* env, jclass self, jlong cursor) {
   TSNode node = ts_tree_cursor_current_node((TSTreeCursor*)cursor);
   return _marshalTreeCursorNode(
-      env,
-      (TreeCursorNode){ts_node_type(node),
-                       ts_tree_cursor_current_field_name((TSTreeCursor*)cursor),
-                       ts_node_start_byte(node) / 2, ts_node_end_byte(node) / 2});
+           env,
+  (TreeCursorNode) {
+    ts_node_type(node),
+                 ts_tree_cursor_current_field_name((TSTreeCursor*)cursor),
+                 ts_node_start_byte(node) / 2, ts_node_end_byte(node) / 2
+  });
 }
 
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeCursorDelete(
-    JNIEnv* env, jclass self, jlong cursor) {
+  JNIEnv* env, jclass self, jlong cursor) {
   delete (TSTreeCursor*)cursor;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_ai_serenade_treesitter_TreeSitter_treeCursorGotoFirstChild(JNIEnv* env,
-                                                                jclass self,
-                                                                jlong cursor) {
+    jclass self,
+    jlong cursor) {
   return (jboolean)ts_tree_cursor_goto_first_child((TSTreeCursor*)cursor);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_ai_serenade_treesitter_TreeSitter_treeCursorGotoNextSibling(JNIEnv* env,
-                                                                 jclass self,
-                                                                 jlong cursor) {
+    jclass self,
+    jlong cursor) {
   return (jboolean)ts_tree_cursor_goto_next_sibling((TSTreeCursor*)cursor);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_ai_serenade_treesitter_TreeSitter_treeCursorGotoParent(JNIEnv* env,
-                                                            jclass self,
-                                                            jlong cursor) {
+    jclass self,
+    jlong cursor) {
   return (jboolean)ts_tree_cursor_goto_parent((TSTreeCursor*)cursor);
 }
 
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeDelete(
-    JNIEnv* env, jclass self, jlong tree) {
+  JNIEnv* env, jclass self, jlong tree) {
   ts_tree_delete((TSTree*)tree);
 }
 
 JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_treeRootNode(
-    JNIEnv* env, jclass self, jlong tree) {
+  JNIEnv* env, jclass self, jlong tree) {
   return _marshalNode(env, ts_tree_root_node((TSTree*)tree));
 }

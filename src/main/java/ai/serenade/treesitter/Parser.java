@@ -23,6 +23,7 @@ public class Parser implements AutoCloseable {
     return new Tree(TreeSitter.parserParseBytes(pointer, bytes, bytes.length));
   }
 
+
   @Override
   public void close() {
     TreeSitter.parserDelete(pointer);
