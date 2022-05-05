@@ -27,6 +27,13 @@ static jfieldID _treeCursorNodeNameField;
 static jfieldID _treeCursorNodeStartByteField;
 static jfieldID _treeCursorNodeEndByteField;
 
+
+// TSPoint
+static jclass _pointClass;
+static jfieldID _pointRowField;
+static jfieldID _pointColumnField;
+
+
 #define _loadClass(VARIABLE, NAME)             \
   {                                            \
     jclass tmp;                                \
@@ -60,6 +67,10 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   _loadField(_treeCursorNodeStartByteField, _treeCursorNodeClass, "startByte",
              "I");
   _loadField(_treeCursorNodeEndByteField, _treeCursorNodeClass, "endByte", "I");
+
+  _loadClass(_pointClass, "ai/serenade/treesitter/TSPoint");
+  _loadField(_pointRowField, _pointClass, "row", "I");
+  _loadField(_pointColumnField, _pointClass, "column", "I");
 
   return JNI_VERSION;
 }
@@ -107,6 +118,15 @@ jobject _marshalTreeCursorNode(JNIEnv* env, TreeCursorNode node) {
   return javaObject;
 }
 
+jobject _marshalPoint(JNIEnv* env, TSPoint point) {
+  jobject javaObject = env->AllocObject(_pointClass);
+
+  env->SetIntField(javaObject, _pointRowField, point.row);
+  env->SetIntField(javaObject, _pointColumnField, point.column);
+  return javaObject;
+}
+
+
 JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeChild(
   JNIEnv* env, jclass self, jobject node, jint child) {
   return _marshalNode(
@@ -135,6 +155,17 @@ JNIEXPORT jint JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeStartByte(
   JNIEnv* env, jclass self, jobject node) {
   return (jint)ts_node_start_byte(_unmarshalNode(env, node)) / 2;
 }
+
+JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeStartPoint(
+  JNIEnv* env, jclass self, jobject node) {
+  return _marshalPoint(env, ts_node_start_point(_unmarshalNode(env, node)));
+}
+
+JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeEndPoint(
+  JNIEnv* env, jclass self, jobject node) {
+  return _marshalPoint(env, ts_node_end_point(_unmarshalNode(env, node)));
+}
+
 
 JNIEXPORT jstring JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeType(
   JNIEnv* env, jclass self, jobject node) {
@@ -168,9 +199,35 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserParseBytes(
   return result;
 }
 
+// Do the lazy way first
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit(
-    JNIEnv* env, jclass self, jlong tree
+  JNIEnv* env, 
+  jclass self,
+  jlong tree,
+  jint start_byte,
+  jint old_end_byte,
+  jint new_end_byte, 
+  jint old_end_point_row,
+  jint old_end_point_col,
+  jint new_end_point_row,
+  jint new_end_point_col
 ) {
+
+  TSInputEdit edit = (TSInputEdit) {
+    (uint32_t) start_byte,
+    (uint32_t) old_end_byte,
+    (uint32_t) new_end_byte,
+    {
+      (uint32_t) old_end_point_row,
+      (uint32_t) old_end_point_col
+    },
+    {
+      (uint32_t) new_end_point_row,
+      (uint32_t) new_end_point_col
+    }
+  };
+
+  ts_tree_edit((TSTree*) tree, &edit);
 
   return;
 }

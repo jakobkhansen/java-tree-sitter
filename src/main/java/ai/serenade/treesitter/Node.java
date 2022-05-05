@@ -30,6 +30,14 @@ public class Node {
     return TreeSitter.nodeStartByte(this);
   }
 
+  public TSPoint getStartPoint() {
+      return TreeSitter.nodeStartPoint(this);
+  }
+
+  public TSPoint getEndPoint() {
+      return TreeSitter.nodeStartPoint(this);
+  }
+
   public String getType() {
     return TreeSitter.nodeType(this);
   }
