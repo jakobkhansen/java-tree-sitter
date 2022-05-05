@@ -35,7 +35,7 @@ public class Node {
   }
 
   public TSPoint getEndPoint() {
-      return TreeSitter.nodeStartPoint(this);
+      return TreeSitter.nodeEndPoint(this);
   }
 
   public String getType() {

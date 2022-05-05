@@ -30,13 +30,25 @@ public class TreeSitter {
         int length
     );
 
+    public static native long parserIncrementalParseBytes(
+        long parser,
+        long old_tree,
+        byte[] source,
+        int length
+    );
+
     public static native void treeEdit(
         long tree,
         int start_byte,
         int old_end_byte,
         int new_end_byte,
+
+        int start_point_row,
+        int start_point_col,
+
         int old_end_point_row,
         int old_end_point_col,
+
         int new_end_point_row,
         int new_end_point_col
     );

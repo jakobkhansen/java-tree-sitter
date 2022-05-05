@@ -118,11 +118,12 @@ jobject _marshalTreeCursorNode(JNIEnv* env, TreeCursorNode node) {
   return javaObject;
 }
 
+// Not sure why I need to divide by two
 jobject _marshalPoint(JNIEnv* env, TSPoint point) {
   jobject javaObject = env->AllocObject(_pointClass);
 
-  env->SetIntField(javaObject, _pointRowField, point.row);
-  env->SetIntField(javaObject, _pointColumnField, point.column);
+  env->SetIntField(javaObject, _pointRowField, point.row / 2);
+  env->SetIntField(javaObject, _pointColumnField, point.column / 2);
   return javaObject;
 }
 
@@ -199,16 +200,31 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserParseBytes(
   return result;
 }
 
+JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserIncrementalParseBytes(
+  JNIEnv* env, jclass self, jlong parser, jlong old_tree, jbyteArray source_bytes,
+  jint length) {
+  jbyte* source = env->GetByteArrayElements(source_bytes, NULL);
+  jlong result = (jlong)ts_parser_parse_string_encoding(
+                   (TSParser*)parser, (TSTree*)old_tree, reinterpret_cast<const char*>(source), length, TSInputEncodingUTF16);
+  env->ReleaseByteArrayElements(source_bytes, source, JNI_ABORT);
+  return result;
+}
+
 // Do the lazy way first
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit(
-  JNIEnv* env, 
+  JNIEnv* env,
   jclass self,
   jlong tree,
   jint start_byte,
   jint old_end_byte,
-  jint new_end_byte, 
+  jint new_end_byte,
+
+  jint start_point_row,
+  jint start_point_col,
+
   jint old_end_point_row,
   jint old_end_point_col,
+
   jint new_end_point_row,
   jint new_end_point_col
 ) {
@@ -217,6 +233,10 @@ JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit(
     (uint32_t) start_byte,
     (uint32_t) old_end_byte,
     (uint32_t) new_end_byte,
+    {
+      (uint32_t) start_point_row,
+      (uint32_t) start_point_col
+    },
     {
       (uint32_t) old_end_point_row,
       (uint32_t) old_end_point_col

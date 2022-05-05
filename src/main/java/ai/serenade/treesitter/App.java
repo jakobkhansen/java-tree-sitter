@@ -9,23 +9,51 @@ public class App {
     }
 
     public static void main(String[] args) {
-        String hello = "Hello";
-        System.out.println(hello);
-
         try (Parser parser = new Parser()) {
             parser.setLanguage(Languages.java());
-            Tree tree = parser.parseString("class Hello {\npublic void hello() {}}");
+            Tree tree = parser.parseString(
+                "class Hello  {\npublic void hello() {}}"
+            );
             System.out.println(tree.getRootNode().getNodeString());
-            System.out.println(tree.getRootNode().getChild(0).getChild(2).getNodeString());
-            TSPoint point1 = new TSPoint(0, 0);
-            TSPoint point2 = new TSPoint(1, 1);
-            // TSInputEdit edit = new TSInputEdit(5, 0, 1, point1, point2);
-            // tree.edit(edit);
+            // System.out.println(
+            //     tree.getRootNode().getChild(0).getChild(1).getChildCount()
+            // );
+            // System.out.println(
+            //     tree.getRootNode().getChild(0).getChildCount()
+            // );
+            // System.out.println(
+            //     tree.getRootNode().getChild(0).getChild(2).getNodeString()
+            // );
+            // System.out.println(
+            //     tree.getRootNode().getChild(0).getChild(2).getStartPoint()
+            // );
+            // System.out.println(
+            //     tree.getRootNode().getChild(0).getChild(2).getEndPoint()
+            // );
+            // System.out.println(
+            //     tree.getRootNode().getChild(0).getChild(2).getStartByte()
+            // );
+            // System.out.println(
+            //     tree.getRootNode().getChild(0).getChild(2).getEndByte()
+            // );
+            System.out.println(tree.getRootNode().getChild(0).getChild(2).getChild(1).getChild(4).getNodeString());
+            Node editedNode = tree.getRootNode().getChild(0).getChild(2).getChild(1).getChild(4);
+            TSPoint newEndPoint = new TSPoint(editedNode.getEndPoint().row, editedNode.getEndPoint().column);
+            newEndPoint.column += 9;
+            TSInputEdit edit = new TSInputEdit(
+                editedNode.getStartByte(),
+                editedNode.getEndByte(),
+                editedNode.getEndByte() + 9,
+                editedNode.getStartPoint(),
+                editedNode.getEndPoint(),
+                newEndPoint
+            );
 
-        } catch (Exception e) {
+            tree.edit(edit);
 
-        } finally {
 
-        }
+            tree = parser.parseString(tree, "class Hello  {\npublic void hello() {int x = 2; }}");
+            System.out.println(tree.getRootNode().getNodeString());
+        } catch (Exception e) {} finally {}
     }
 }

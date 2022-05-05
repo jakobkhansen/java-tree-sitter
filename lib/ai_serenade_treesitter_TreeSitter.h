@@ -105,11 +105,19 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserParseBytes
 
 /*
  * Class:     ai_serenade_treesitter_TreeSitter
+ * Method:    parserIncrementalParseBytes
+ * Signature: (JJ[BI)J
+ */
+JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserIncrementalParseBytes
+  (JNIEnv *, jclass, jlong, jlong, jbyteArray, jint);
+
+/*
+ * Class:     ai_serenade_treesitter_TreeSitter
  * Method:    treeEdit
- * Signature: (JIIIIIII)V
+ * Signature: (JIIIIIIIII)V
  */
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit
-  (JNIEnv *, jclass, jlong, jint, jint, jint, jint, jint, jint, jint);
+  (JNIEnv *, jclass, jlong, jint, jint, jint, jint, jint, jint, jint, jint, jint);
 
 /*
  * Class:     ai_serenade_treesitter_TreeSitter
