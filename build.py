@@ -7,10 +7,14 @@ import os
 import platform
 import sys
 import tempfile
+import glob
 
 
 # adapted from https://github.com/tree-sitter/py-tree-sitter
-def build(repositories, output_path="libjava-tree-sitter", arch=None, verbose=False):
+def build(repositories,
+          output_path="libjava-tree-sitter",
+          arch=None,
+          verbose=False):
     if arch and platform.system() != "Darwin":
         arch = "64" if "64" in arch else "32"
 
@@ -18,11 +22,9 @@ def build(repositories, output_path="libjava-tree-sitter", arch=None, verbose=Fa
     here = os.path.dirname(os.path.realpath(__file__))
     env = ""
     if arch:
-        env += (
-            f"CFLAGS='-arch {arch}' LDFLAGS='-arch {arch}'"
-            if platform.system() == "Darwin"
-            else f"CFLAGS='-m{arch}' LDFLAGS='-m{arch}'"
-        )
+        env += (f"CFLAGS='-arch {arch}' LDFLAGS='-arch {arch}'"
+                if platform.system() == "Darwin" else
+                f"CFLAGS='-m{arch}' LDFLAGS='-m{arch}'")
 
     os.system(
         f"make -C {os.path.join(here, 'tree-sitter')} clean {'> /dev/null' if not verbose else ''}"
@@ -54,9 +56,8 @@ def build(repositories, output_path="libjava-tree-sitter", arch=None, verbose=Fa
             "1",
         )
 
-    source_mtimes = [os.path.getmtime(__file__)] + [
-        os.path.getmtime(path) for path in source_paths
-    ]
+    source_mtimes = [os.path.getmtime(__file__)
+                     ] + [os.path.getmtime(path) for path in source_paths]
 
     if cpp:
         if ctypes.util.find_library("stdc++"):
@@ -64,7 +65,8 @@ def build(repositories, output_path="libjava-tree-sitter", arch=None, verbose=Fa
         elif ctypes.util.find_library("c++"):
             compiler.add_library("c++")
 
-    output_mtime = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
+    output_mtime = os.path.getmtime(output_path) if os.path.exists(
+        output_path) else 0
     if max(source_mtimes) <= output_mtime:
         return False
 
@@ -80,9 +82,8 @@ def build(repositories, output_path="libjava-tree-sitter", arch=None, verbose=Fa
                 flags.append("-std=c99")
 
             if arch:
-                flags += (
-                    ["-arch", arch] if platform.system() == "Darwin" else [f"-m{arch}"]
-                )
+                flags += (["-arch", arch]
+                          if platform.system() == "Darwin" else [f"-m{arch}"])
 
             include_dirs = [
                 os.path.dirname(source_path),
@@ -92,12 +93,10 @@ def build(repositories, output_path="libjava-tree-sitter", arch=None, verbose=Fa
 
             if platform.system() == "Linux":
                 include_dirs.append(
-                    os.path.join(os.environ["JAVA_HOME"], "include", "linux")
-                )
+                    os.path.join(os.environ["JAVA_HOME"], "include", "linux"))
             elif platform.system() == "Darwin":
                 include_dirs.append(
-                    os.path.join(os.environ["JAVA_HOME"], "include", "darwin")
-                )
+                    os.path.join(os.environ["JAVA_HOME"], "include", "darwin"))
 
             object_paths.append(
                 compiler.compile(
@@ -105,23 +104,23 @@ def build(repositories, output_path="libjava-tree-sitter", arch=None, verbose=Fa
                     output_dir=out_dir,
                     include_dirs=include_dirs,
                     extra_preargs=flags,
-                )[0]
-            )
+                )[0])
 
         extra_preargs = []
         if platform.system() == "Darwin":
             extra_preargs.append("-dynamiclib")
 
         if arch:
-            extra_preargs += (
-                ["-arch", arch] if platform.system() == "Darwin" else [f"-m{arch}"]
-            )
+            extra_preargs += (["-arch", arch] if platform.system() == "Darwin"
+                              else [f"-m{arch}"])
 
         compiler.link_shared_object(
             object_paths,
             output_path,
             extra_preargs=extra_preargs,
-            extra_postargs=[os.path.join(here, "tree-sitter", "libtree-sitter.a")],
+            extra_postargs=[
+                os.path.join(here, "tree-sitter", "libtree-sitter.a")
+            ],
             library_dirs=[os.path.join(here, "tree-sitter")],
         )
 
@@ -135,16 +134,20 @@ if __name__ == "__main__":
         "--arch",
         help="Architecture to build for (x86, x86_64, arm64)",
     )
+    parser.add_argument("-o",
+                        "--output",
+                        default="../parser/libparser",
+                        help="Output file name")
+    parser.add_argument("-v",
+                        "--verbose",
+                        action="store_true",
+                        help="Print verbose output")
     parser.add_argument(
-        "-o", "--output", default="libjava-tree-sitter", help="Output file name"
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Print verbose output"
-    )
-    parser.add_argument(
-        "repositories",
+        "-r",
+        "--repositories",
         nargs="+",
         help="tree-sitter repositories to include in build",
+        default=glob.glob("../grammars/*")
     )
 
     args = parser.parse_args()
