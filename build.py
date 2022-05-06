@@ -136,7 +136,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("-o",
                         "--output",
-                        default="../parser/libparser",
+                        default="../app/src/main/resources/libparser",
                         help="Output file name")
     parser.add_argument("-v",
                         "--verbose",
