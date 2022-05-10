@@ -18,19 +18,19 @@ def build(repositories,
     if arch and platform.system() != "Darwin":
         arch = "64" if "64" in arch else "32"
 
-    output_path = f"{output_path}.{'dylib' if platform.system() == 'Darwin' else 'so'}"
+    output_path = "{}.{}".format(output_path, 'dylib' if platform.system() == 'Darwin' else 'so')
     here = os.path.dirname(os.path.realpath(__file__))
     env = ""
     if arch:
-        env += (f"CFLAGS='-arch {arch}' LDFLAGS='-arch {arch}'"
+        env += ("CFLAGS='-arch {}' LDFLAGS='-arch {}'".format(arch, arch)
                 if platform.system() == "Darwin" else
-                f"CFLAGS='-m{arch}' LDFLAGS='-m{arch}'")
+                "CFLAGS='-m{}' LDFLAGS='-m{}'".format(arch, arch))
 
     os.system(
-        f"make -C {os.path.join(here, 'tree-sitter')} clean {'> /dev/null' if not verbose else ''}"
+        "make -C {} clean {}".format(os.path.join(here, 'tree-sitter'), '> /dev/null' if not verbose else '')
     )
     os.system(
-        f"{env} make -C {os.path.join(here, 'tree-sitter')} {'> /dev/null' if not verbose else ''}"
+        "{} make -C {} {}".format(env, os.path.join(here, 'tree-sitter'), '> /dev/null' if not verbose else '')
     )
 
     cpp = False
@@ -52,7 +52,7 @@ def build(repositories,
             source_paths.append(scanner_c)
 
         compiler.define_macro(
-            f"TS_LANGUAGE_{os.path.split(repository.rstrip('/'))[1].split('tree-sitter-')[-1].replace('-', '_').upper()}",
+            "TS_LANGUAGE_{}".format(os.path.split(repository.rstrip('/'))[1].split('tree-sitter-')[-1].replace('-', '_').upper()),
             "1",
         )
 
@@ -83,7 +83,7 @@ def build(repositories,
 
             if arch:
                 flags += (["-arch", arch]
-                          if platform.system() == "Darwin" else [f"-m{arch}"])
+                          if platform.system() == "Darwin" else ["-m{}".format(arch)])
 
             include_dirs = [
                 os.path.dirname(source_path),
@@ -112,7 +112,7 @@ def build(repositories,
 
         if arch:
             extra_preargs += (["-arch", arch] if platform.system() == "Darwin"
-                              else [f"-m{arch}"])
+                              else ["-m{}".format(arch)])
 
         compiler.link_shared_object(
             object_paths,
