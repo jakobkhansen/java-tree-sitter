@@ -7,21 +7,18 @@ import org.junit.jupiter.api.Test;
 
 public class NodeTest extends TestBase {
 
-  @Test
-  void testGetChildren() throws UnsupportedEncodingException {
-    try (Parser parser = new Parser()) {
-      parser.setLanguage(Languages.python());
-      try (Tree tree = parser.parseString("def foo(bar, baz):\n  print(bar)\n  print(baz)")) {
-        Node root = tree.getRootNode();
-        assertEquals(1, root.getChildCount());
-        assertEquals("module", root.getType());
-        assertEquals(0, root.getStartByte());
-        assertEquals(44, root.getEndByte());
-
-        Node function = root.getChild(0);
-        assertEquals("function_definition", function.getType());
-        assertEquals(5, function.getChildCount());
-      }
+    @Test
+    void testGetChildren() throws UnsupportedEncodingException {
+        try (Parser parser = new Parser()) {
+            parser.setLanguage(Languages.java());
+            try (Tree tree = parser.parseString("class Hello {}")) {
+                Node root = tree.getRootNode();
+                assertEquals(1, root.getChildCount());
+                assertEquals(
+                    root.getNodeString(),
+                    "(program (class_declaration name: (identifier) body: (class_body)))"
+                );
+            }
+        }
     }
-  }
 }

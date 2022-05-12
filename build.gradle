@@ -71,13 +71,23 @@ bintray {
 }
 
 test {
-    // useJUnitPlatform()
-    // testLogging {
-    //     events "passed", "skipped", "failed"
-    // }
-    //
-    // environment "JAVA_TREE_SITTER", "${project.projectDir.toString()}/libjava-tree-sitter.so"
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed", "standard_out"
+    }
+
+    environment "JAVA_TREE_SITTER", "${project.projectDir.toString()}/libparser.so"
 }
+
+task buildtestparser {
+    doLast {
+        exec {
+            commandLine "make", "test"
+        }
+    }
+}
+
+tasks.test.dependsOn("buildtestparser")
 
 ext {
    javaMainClass = "ai.serenade.treesitter.App"

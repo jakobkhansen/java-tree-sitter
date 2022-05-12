@@ -7,3 +7,6 @@
 [submodule "grammars/tree-sitter-java"]
 	path = grammars/tree-sitter-java
 	url = https://github.com/tree-sitter/tree-sitter-java.git
+[submodule "src/test/grammars/tree-sitter-java"]
+	path = src/test/grammars/tree-sitter-java
+	url = https://github.com/tree-sitter/tree-sitter-java
