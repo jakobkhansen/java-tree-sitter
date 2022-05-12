@@ -5,3 +5,4 @@ build
 *.dylib
 *.log
 .ccls-cache
+.ccls
