@@ -114,10 +114,10 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserIncremental
 /*
  * Class:     ai_serenade_treesitter_TreeSitter
  * Method:    treeEdit
- * Signature: (JIIIIIIIII)V
+ * Signature: (JLai/serenade/treesitter/TSInputEdit;)V
  */
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit
-  (JNIEnv *, jclass, jlong, jint, jint, jint, jint, jint, jint, jint, jint, jint);
+  (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     ai_serenade_treesitter_TreeSitter

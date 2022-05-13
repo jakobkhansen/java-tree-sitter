@@ -37,20 +37,10 @@ public class TreeSitter {
         int length
     );
 
+    // TODO refactor this
     public static native void treeEdit(
         long tree,
-        int start_byte,
-        int old_end_byte,
-        int new_end_byte,
-
-        int start_point_row,
-        int start_point_col,
-
-        int old_end_point_row,
-        int old_end_point_col,
-
-        int new_end_point_row,
-        int new_end_point_col
+        TSInputEdit inputEdit
     );
 
     public static native long treeCursorNew(Node node);

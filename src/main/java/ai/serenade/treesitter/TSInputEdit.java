@@ -5,10 +5,10 @@ package ai.serenade.treesitter;
  */
 public class TSInputEdit {
 
-    int startByte;
+    public int startByte;
     int oldEndByte;
     int newEndByte;
-    TSPoint start_point;
+    public TSPoint start_point;
     TSPoint old_end_point;
     TSPoint new_end_point;
 

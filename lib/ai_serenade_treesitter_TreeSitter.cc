@@ -13,6 +13,7 @@ struct TreeCursorNode {
 
 static jint JNI_VERSION = JNI_VERSION_1_6;
 
+// Node
 static jclass _nodeClass;
 static jfieldID _nodeContext0Field;
 static jfieldID _nodeContext1Field;
@@ -21,17 +22,26 @@ static jfieldID _nodeContext3Field;
 static jfieldID _nodeIdField;
 static jfieldID _nodeTreeField;
 
+// TreeCursorNode
 static jclass _treeCursorNodeClass;
 static jfieldID _treeCursorNodeTypeField;
 static jfieldID _treeCursorNodeNameField;
 static jfieldID _treeCursorNodeStartByteField;
 static jfieldID _treeCursorNodeEndByteField;
 
-
 // TSPoint
 static jclass _pointClass;
 static jfieldID _pointRowField;
 static jfieldID _pointColumnField;
+
+// TSInputEdit
+static jclass _inputEditClass;
+static jfieldID _inputEditStartByteField;
+static jfieldID _inputEditOldEndByteField;
+static jfieldID _inputEditNewEndByteField;
+static jfieldID _inputEditStartPointField;
+static jfieldID _inputEditOldEndPointField;
+static jfieldID _inputEditNewEndPointField;
 
 
 #define _loadClass(VARIABLE, NAME)             \
@@ -51,6 +61,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     return JNI_ERR;
   }
 
+  // Node
   _loadClass(_nodeClass, "ai/serenade/treesitter/Node");
   _loadField(_nodeContext0Field, _nodeClass, "context0", "I");
   _loadField(_nodeContext1Field, _nodeClass, "context1", "I");
@@ -59,6 +70,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   _loadField(_nodeIdField, _nodeClass, "id", "J");
   _loadField(_nodeTreeField, _nodeClass, "tree", "J");
 
+  // TreeCursorNode
   _loadClass(_treeCursorNodeClass, "ai/serenade/treesitter/TreeCursorNode");
   _loadField(_treeCursorNodeTypeField, _treeCursorNodeClass, "type",
              "Ljava/lang/String;");
@@ -68,9 +80,20 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
              "I");
   _loadField(_treeCursorNodeEndByteField, _treeCursorNodeClass, "endByte", "I");
 
+  // TSPoint
   _loadClass(_pointClass, "ai/serenade/treesitter/TSPoint");
   _loadField(_pointRowField, _pointClass, "row", "I");
   _loadField(_pointColumnField, _pointClass, "column", "I");
+
+  // TSInputEdit
+  _loadClass(_inputEditClass, "ai/serenade/treesitter/TSInputEdit");
+  _loadField(_inputEditStartByteField, _inputEditClass, "startByte", "I");
+  _loadField(_inputEditOldEndByteField, _inputEditClass, "oldEndByte", "I");
+  _loadField(_inputEditNewEndByteField, _inputEditClass, "newEndByte", "I");
+  _loadField(_inputEditStartPointField, _inputEditClass, "start_point", "Lai/serenade/treesitter/TSPoint;");
+  _loadField(_inputEditOldEndPointField, _inputEditClass, "old_end_point", "Lai/serenade/treesitter/TSPoint;");
+  _loadField(_inputEditNewEndPointField, _inputEditClass, "new_end_point", "Lai/serenade/treesitter/TSPoint;");
+
 
   return JNI_VERSION;
 }
@@ -83,6 +106,7 @@ void JNI_OnUnload(JavaVM* vm, void* reserved) {
   env->DeleteGlobalRef(_treeCursorNodeClass);
 }
 
+// Node
 jobject _marshalNode(JNIEnv* env, TSNode node) {
   jobject javaObject = env->AllocObject(_nodeClass);
   env->SetIntField(javaObject, _nodeContext0Field, node.context[0]);
@@ -107,6 +131,7 @@ TSNode _unmarshalNode(JNIEnv* env, jobject javaObject) {
   };
 }
 
+// TreeCursorNode
 jobject _marshalTreeCursorNode(JNIEnv* env, TreeCursorNode node) {
   jobject javaObject = env->AllocObject(_treeCursorNodeClass);
   env->SetObjectField(javaObject, _treeCursorNodeTypeField,
@@ -118,6 +143,7 @@ jobject _marshalTreeCursorNode(JNIEnv* env, TreeCursorNode node) {
   return javaObject;
 }
 
+// Point
 // Not sure why I need to divide by two
 jobject _marshalPoint(JNIEnv* env, TSPoint point) {
   jobject javaObject = env->AllocObject(_pointClass);
@@ -125,6 +151,25 @@ jobject _marshalPoint(JNIEnv* env, TSPoint point) {
   env->SetIntField(javaObject, _pointRowField, point.row / 2);
   env->SetIntField(javaObject, _pointColumnField, point.column / 2);
   return javaObject;
+}
+
+TSPoint _unmarshalPoint(JNIEnv* env, jobject javaObject) {
+  return (TSPoint) {
+    (uint32_t)env->GetIntField(javaObject, _pointRowField),
+    (uint32_t)env->GetIntField(javaObject, _pointColumnField),
+  };
+}
+
+// TSInputEdit
+TSInputEdit _unmarshalInputEdit(JNIEnv* env, jobject inputEdit) {
+  return (TSInputEdit) {
+    (uint32_t)env->GetIntField(inputEdit, _inputEditStartByteField),
+    (uint32_t)env->GetIntField(inputEdit, _inputEditOldEndByteField),
+    (uint32_t)env->GetIntField(inputEdit, _inputEditNewEndByteField),   
+    _unmarshalPoint(env, env->GetObjectField(inputEdit, _inputEditStartPointField)),
+    _unmarshalPoint(env, env->GetObjectField(inputEdit, _inputEditOldEndPointField)),
+    _unmarshalPoint(env, env->GetObjectField(inputEdit, _inputEditNewEndPointField)),
+  };
 }
 
 
@@ -210,46 +255,12 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserIncremental
   return result;
 }
 
-// Do the lazy way first
+
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit(
-  JNIEnv* env,
-  jclass self,
-  jlong tree,
-  jint start_byte,
-  jint old_end_byte,
-  jint new_end_byte,
+  JNIEnv* env, jclass self, jlong tree, jobject inputEdit) {
 
-  jint start_point_row,
-  jint start_point_col,
-
-  jint old_end_point_row,
-  jint old_end_point_col,
-
-  jint new_end_point_row,
-  jint new_end_point_col
-) {
-
-  TSInputEdit edit = (TSInputEdit) {
-    (uint32_t) start_byte,
-    (uint32_t) old_end_byte,
-    (uint32_t) new_end_byte,
-    {
-      (uint32_t) start_point_row,
-      (uint32_t) start_point_col
-    },
-    {
-      (uint32_t) old_end_point_row,
-      (uint32_t) old_end_point_col
-    },
-    {
-      (uint32_t) new_end_point_row,
-      (uint32_t) new_end_point_col
-    }
-  };
-
+  TSInputEdit edit = _unmarshalInputEdit(env, inputEdit);
   ts_tree_edit((TSTree*) tree, &edit);
-
-  return;
 }
 
 JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_treeCursorNew(
