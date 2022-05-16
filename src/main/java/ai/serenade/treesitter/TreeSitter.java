@@ -64,4 +64,7 @@ public class TreeSitter {
     public static native void treeDelete(long tree);
 
     public static native Node treeRootNode(long tree);
+
+    // Query
+    public static native long tsQueryNew(long language, String source);
 }
