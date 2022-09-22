@@ -6,20 +6,19 @@ package ai.serenade.treesitter;
 public class TSInputEdit {
 
     public int startByte;
-    int oldEndByte;
-    int newEndByte;
+    public int oldEndByte;
+    public int newEndByte;
     public TSPoint start_point;
-    TSPoint old_end_point;
-    TSPoint new_end_point;
+    public TSPoint old_end_point;
+    public TSPoint new_end_point;
 
     public TSInputEdit(
-        int startByte,
-        int oldEndByte,
-        int newEndByte,
-        TSPoint start_point,
-        TSPoint old_end_point,
-        TSPoint new_end_point
-    ) {
+            int startByte,
+            int oldEndByte,
+            int newEndByte,
+            TSPoint start_point,
+            TSPoint old_end_point,
+            TSPoint new_end_point) {
         this.startByte = startByte;
         this.oldEndByte = oldEndByte;
         this.newEndByte = newEndByte;
