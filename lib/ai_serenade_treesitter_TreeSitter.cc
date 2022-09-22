@@ -43,6 +43,13 @@ static jfieldID _inputEditStartPointField;
 static jfieldID _inputEditOldEndPointField;
 static jfieldID _inputEditNewEndPointField;
 
+// TSRange
+static jclass _rangeClass;
+static jfieldID _rangeStartPointField;
+static jfieldID _rangeEndPointField;
+static jfieldID _rangeStartByteField;
+static jfieldID _rangeEndByteField;
+
 
 #define _loadClass(VARIABLE, NAME)             \
   {                                            \
@@ -118,6 +125,7 @@ jobject _marshalNode(JNIEnv* env, TSNode node) {
   return javaObject;
 }
 
+
 TSNode _unmarshalNode(JNIEnv* env, jobject javaObject) {
   return (TSNode) {
     {
@@ -150,6 +158,16 @@ jobject _marshalPoint(JNIEnv* env, TSPoint point) {
 
   env->SetIntField(javaObject, _pointRowField, point.row / 2);
   env->SetIntField(javaObject, _pointColumnField, point.column / 2);
+  return javaObject;
+}
+
+jobject _marshalRange(JNIEnv* env, TSRange range) {
+  jobject javaObject = env->AllocObject(_rangeClass);
+
+  env->SetObjectField(javaObject, _rangeStartPointField, _marshalPoint(env, range.start_point));
+  env->SetObjectField(javaObject, _rangeEndPointField, _marshalPoint(env, range.end_point));
+  env->SetIntField(javaObject, _rangeStartByteField, range.start_byte);
+  env->SetIntField(javaObject, _rangeEndByteField, range.end_byte);
   return javaObject;
 }
 
@@ -261,6 +279,12 @@ JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit(
 
   TSInputEdit edit = _unmarshalInputEdit(env, inputEdit);
   ts_tree_edit((TSTree*) tree, &edit);
+}
+
+JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_treeGetChangedRanges(
+  JNIEnv* env, jclass self, jlong old_tree, jlong new_tree, uint32_t length) {
+  TSRange* range = ts_tree_get_changed_ranges((TSTree*) old_tree, (TSTree*) new_tree,  &length);
+  return _marshalRange(env, (*range));
 }
 
 JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_treeCursorNew(

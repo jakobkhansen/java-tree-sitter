@@ -25,29 +25,27 @@ public class TreeSitter {
     public static native void parserSetLanguage(long parser, long language);
 
     public static native long parserParseBytes(
-        long parser,
-        byte[] source,
-        int length
-    );
+            long parser,
+            byte[] source,
+            int length);
 
     public static native long parserIncrementalParseBytes(
-        long parser,
-        long old_tree,
-        byte[] source,
-        int length
-    );
+            long parser,
+            long old_tree,
+            byte[] source,
+            int length);
 
     // TODO refactor this
     public static native void treeEdit(
-        long tree,
-        TSInputEdit inputEdit
-    );
+            long tree,
+            TSInputEdit inputEdit);
+
+    public static native TSRange treeGetChangedRanges(long old_tree, long new_tree, int length);
 
     public static native long treeCursorNew(Node node);
 
     public static native TreeCursorNode treeCursorCurrentTreeCursorNode(
-        long cursor
-    );
+            long cursor);
 
     public static native String treeCursorCurrentFieldName(long cursor);
 
