@@ -121,6 +121,14 @@ JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit
 
 /*
  * Class:     ai_serenade_treesitter_TreeSitter
+ * Method:    treeGetChangedRanges
+ * Signature: (JJ)[Lai/serenade/treesitter/TSRange;
+ */
+JNIEXPORT jobjectArray JNICALL Java_ai_serenade_treesitter_TreeSitter_treeGetChangedRanges
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     ai_serenade_treesitter_TreeSitter
  * Method:    treeCursorNew
  * Signature: (Lai/serenade/treesitter/Node;)J
  */

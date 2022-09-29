@@ -3,6 +3,7 @@
 #include <jni.h>
 #include <string.h>
 #include <tree_sitter/api.h>
+#include <iostream>
 
 struct TreeCursorNode {
   const char* type;
@@ -12,6 +13,7 @@ struct TreeCursorNode {
 };
 
 static jint JNI_VERSION = JNI_VERSION_1_6;
+
 
 // Node
 static jclass _nodeClass;
@@ -101,6 +103,12 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   _loadField(_inputEditOldEndPointField, _inputEditClass, "old_end_point", "Lai/serenade/treesitter/TSPoint;");
   _loadField(_inputEditNewEndPointField, _inputEditClass, "new_end_point", "Lai/serenade/treesitter/TSPoint;");
 
+  // TSRange
+  _loadClass(_rangeClass, "ai/serenade/treesitter/TSRange");
+  _loadField(_rangeStartByteField, _rangeClass, "start_byte", "I");
+  _loadField(_rangeEndByteField, _rangeClass, "end_byte", "I");
+  _loadField(_rangeStartPointField, _rangeClass, "start_point", "Lai/serenade/treesitter/TSPoint;");
+  _loadField(_rangeEndPointField, _rangeClass, "end_point", "Lai/serenade/treesitter/TSPoint;");
 
   return JNI_VERSION;
 }
@@ -281,10 +289,17 @@ JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeEdit(
   ts_tree_edit((TSTree*) tree, &edit);
 }
 
-JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_treeGetChangedRanges(
-  JNIEnv* env, jclass self, jlong old_tree, jlong new_tree, uint32_t length) {
+JNIEXPORT jobjectArray JNICALL Java_ai_serenade_treesitter_TreeSitter_treeGetChangedRanges(
+  JNIEnv* env, jclass self, jlong old_tree, jlong new_tree) {
+  uint32_t length = 0;
   TSRange* range = ts_tree_get_changed_ranges((TSTree*) old_tree, (TSTree*) new_tree,  &length);
-  return _marshalRange(env, (*range));
+  jobjectArray result = (*env).NewObjectArray(length, _rangeClass, NULL);
+  for (int i = 0; i < length; i++) {
+    env->SetObjectArrayElement(result,i,_marshalRange(env,range[i]));
+  }
+
+
+  return result;
 }
 
 JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_treeCursorNew(

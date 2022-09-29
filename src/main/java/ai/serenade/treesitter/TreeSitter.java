@@ -40,7 +40,7 @@ public class TreeSitter {
             long tree,
             TSInputEdit inputEdit);
 
-    public static native TSRange treeGetChangedRanges(long old_tree, long new_tree, int length);
+    public static native TSRange[] treeGetChangedRanges(long old_tree, long new_tree);
 
     public static native long treeCursorNew(Node node);
 

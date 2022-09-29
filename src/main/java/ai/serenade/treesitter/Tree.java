@@ -4,7 +4,6 @@ public class Tree implements AutoCloseable {
 
     private long pointer;
 
-
     Tree(long pointer) {
         this.pointer = pointer;
     }
@@ -20,9 +19,12 @@ public class Tree implements AutoCloseable {
 
     public void edit(TSInputEdit edit) {
         TreeSitter.treeEdit(
-            pointer,
-            edit
-        );
+                pointer,
+                edit);
+    }
+
+    public TSRange[] getChangedRanges(Tree old_tree) {
+        return TreeSitter.treeGetChangedRanges(old_tree.getPointer(), pointer);
     }
 
     public long getPointer() {
