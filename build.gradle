@@ -88,11 +88,3 @@ task buildtestparser {
 }
 
 tasks.test.dependsOn("buildtestparser")
-
-ext {
-   javaMainClass = "ai.serenade.treesitter.App"
-}
-
-application {
-    mainClassName = javaMainClass
-}
