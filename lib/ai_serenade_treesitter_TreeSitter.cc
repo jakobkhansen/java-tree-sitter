@@ -52,6 +52,17 @@ static jfieldID _rangeEndPointField;
 static jfieldID _rangeStartByteField;
 static jfieldID _rangeEndByteField;
 
+// TSQueryMatch
+static jclass _queryMatchClass;
+static jfieldID _queryMatchIdField;
+static jfieldID _queryMatchPatternIndexField;
+static jfieldID _queryMatchCapturesField;
+
+// TSQueryCapture
+static jclass _queryCaptureClass;
+static jfieldID _queryCaptureNode;
+static jfieldID _queryCaptureIndex;
+
 
 #define _loadClass(VARIABLE, NAME)             \
   {                                            \
@@ -63,6 +74,7 @@ static jfieldID _rangeEndByteField;
 
 #define _loadField(VARIABLE, CLASS, NAME, TYPE) \
   { VARIABLE = env->GetFieldID(CLASS, NAME, TYPE); }
+
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   JNIEnv* env;
@@ -110,6 +122,18 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   _loadField(_rangeStartPointField, _rangeClass, "start_point", "Lai/serenade/treesitter/TSPoint;");
   _loadField(_rangeEndPointField, _rangeClass, "end_point", "Lai/serenade/treesitter/TSPoint;");
 
+
+  // TSQueryCapture
+  _loadClass(_queryCaptureClass, "ai/serenade/treesitter/TSQueryCapture");
+  _loadField(_queryCaptureNode, _queryCaptureClass, "node", "Lai/serenade/treesitter/Node;");
+  _loadField(_queryCaptureIndex, _queryCaptureClass, "index", "I");
+
+  // TSQueryMatch
+  _loadClass(_queryMatchClass, "ai/serenade/treesitter/TSQueryMatch");
+  _loadField(_queryMatchIdField, _queryMatchClass, "id", "I");
+  _loadField(_queryMatchPatternIndexField, _queryMatchClass, "pattern_index", "I");
+  _loadField(_queryMatchCapturesField, _queryMatchClass, "captures", "[Lai/serenade/treesitter/TSQueryCapture;");
+
   return JNI_VERSION;
 }
 
@@ -132,6 +156,31 @@ jobject _marshalNode(JNIEnv* env, TSNode node) {
   env->SetLongField(javaObject, _nodeTreeField, (jlong)node.tree);
   return javaObject;
 }
+
+jobject _marshalCapture(JNIEnv* env, TSQueryCapture capture) {
+  jobject javaObject = env->AllocObject(_queryCaptureClass);
+  env->SetIntField(javaObject, _queryCaptureIndex, capture.index);
+  env->SetObjectField(javaObject, _queryCaptureNode, _marshalNode(env, capture.node));
+
+  return javaObject;
+}
+
+// TSQueryMatch
+jobject _marshalQueryMatch(JNIEnv* env, TSQueryMatch match) {
+  jobject javaObject = env->AllocObject(_queryMatchClass);
+  env->SetIntField(javaObject, _queryMatchIdField, match.id);
+  env->SetIntField(javaObject, _queryMatchPatternIndexField, match.pattern_index);
+
+  jobjectArray captures = (*env).NewObjectArray(match.capture_count, _queryCaptureClass, NULL);
+  for (int i = 0; i < match.capture_count; i++) {
+    env->SetObjectArrayElement(captures, i, _marshalCapture(env, match.captures[i]));
+  }
+  env->SetObjectField(javaObject, _queryMatchCapturesField, captures);
+
+
+  return javaObject;
+}
+
 
 
 TSNode _unmarshalNode(JNIEnv* env, jobject javaObject) {
@@ -178,6 +227,7 @@ jobject _marshalRange(JNIEnv* env, TSRange range) {
   env->SetIntField(javaObject, _rangeEndByteField, range.end_byte);
   return javaObject;
 }
+
 
 TSPoint _unmarshalPoint(JNIEnv* env, jobject javaObject) {
   return (TSPoint) {
@@ -398,6 +448,12 @@ JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorExec(
 
 JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorNextMatch
   (JNIEnv * env, jclass self, jlong query_cursor) {
+    TSQueryMatch query_match;
+    bool found = ts_query_cursor_next_match((TSQueryCursor*)query_cursor, &query_match);
 
-    return NULL;
+    if (!found) {
+      return NULL;
+    }
+
+    return _marshalQueryMatch(env, query_match);
 }
