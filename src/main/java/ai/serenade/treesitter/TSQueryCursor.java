@@ -8,6 +8,10 @@ public class TSQueryCursor {
     }
 
     public void execQuery(TSQuery query, Node node) {
-        TreeSitter.tsQueryExec(pointer, query.pointer, node);
+        TreeSitter.tsQueryCursorExec(pointer, query.pointer, node);
+    }
+
+    public TSQueryMatch nextMatch() {
+        return TreeSitter.tsQueryCursorNextMatch(pointer);
     }
 }

@@ -225,11 +225,19 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorNew
 
 /*
  * Class:     ai_serenade_treesitter_TreeSitter
- * Method:    tsQueryExec
+ * Method:    tsQueryCursorExec
  * Signature: (JJLai/serenade/treesitter/Node;)V
  */
-JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryExec
+JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorExec
   (JNIEnv *, jclass, jlong, jlong, jobject);
+
+/*
+ * Class:     ai_serenade_treesitter_TreeSitter
+ * Method:    tsQueryCursorNextMatch
+ * Signature: (J)Lai/serenade/treesitter/TSQueryMatch;
+ */
+JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorNextMatch
+  (JNIEnv *, jclass, jlong);
 
 #ifdef __cplusplus
 }

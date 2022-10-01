@@ -24,6 +24,7 @@ public class TSQueryCursorTest extends TestBase {
             TSQueryCursor cursor = new TSQueryCursor();
 
             cursor.execQuery(query, tree.getRootNode());
+            System.out.println(cursor.nextMatch());
         }
     }
 

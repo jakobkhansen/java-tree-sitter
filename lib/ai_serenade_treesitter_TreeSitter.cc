@@ -391,7 +391,13 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorNew(
   return (jlong) ts_query_cursor_new();
 }
 
-JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryExec(
+JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorExec(
   JNIEnv* env, jclass self, jlong query_cursor, jlong query, jobject node) {
   ts_query_cursor_exec((TSQueryCursor*) query_cursor, (TSQuery*) query, _unmarshalNode(env,node));
+}
+
+JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorNextMatch
+  (JNIEnv * env, jclass self, jlong query_cursor) {
+
+    return NULL;
 }
