@@ -30,17 +30,15 @@ public class EditRangeTest extends TestBase {
                     editedNode.getEndPoint(),
                     newEndPoint);
 
-            String oldSExp = tree.getRootNode().getNodeString();
-
             tree.edit(edit);
 
             Tree new_tree = parser.parseString(tree, "class Hello {\npublic void hello() {\nint x = 3; }}");
 
             TSRange[] ranges = new_tree.getChangedRanges(tree);
-            for (TSRange range : ranges) {
-                System.out.println(Printer.print(range));
+            TSRange range = ranges[0];
 
-            }
+            assertEquals(40, range.start_byte, "Start byte");
+            assertEquals(98, range.end_byte, "End byte");
         }
 
     }

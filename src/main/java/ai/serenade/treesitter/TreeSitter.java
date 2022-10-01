@@ -65,4 +65,9 @@ public class TreeSitter {
 
     // Query
     public static native long tsQueryNew(long language, String source);
+
+    public static native long tsQueryCursorNew();
+
+    public static native void tsQueryExec(long query_cursor, long query, Node node);
+
 }
