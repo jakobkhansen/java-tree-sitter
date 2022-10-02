@@ -15,7 +15,7 @@ public class TSQueryCursorTest extends TestBase {
     @Test
     void testCreateQueryCursor() throws UnsupportedEncodingException {
         TSQueryCursor cursor = new TSQueryCursor();
-        assertNotEquals(0, cursor.pointer, "Pointer is not null");
+        assertNotEquals(0, cursor.getPointer(), "Pointer is not null");
     }
 
     @Test

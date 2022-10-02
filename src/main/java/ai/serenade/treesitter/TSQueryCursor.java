@@ -1,7 +1,7 @@
 package ai.serenade.treesitter;
 
 public class TSQueryCursor {
-    long pointer;
+    private long pointer;
 
     public TSQueryCursor() {
         this.pointer = TreeSitter.tsQueryCursorNew();

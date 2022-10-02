@@ -438,7 +438,8 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryNew(
 
 JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorNew(
   JNIEnv* env, jclass self) {
-  return (jlong) ts_query_cursor_new();
+  TSQueryCursor* cursor = ts_query_cursor_new();
+  return (jlong) cursor;
 }
 
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorExec(
