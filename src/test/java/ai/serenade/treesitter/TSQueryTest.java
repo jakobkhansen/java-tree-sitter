@@ -12,7 +12,7 @@ public class TSQueryTest extends TestBase {
     void testQuery() throws UnsupportedEncodingException {
         TSQuery query = new TSQuery(Languages.java(), "(class_declaration)");
 
-        assertNotEquals(query.pointer, 0, "Pointer is not null");
+        assertNotEquals(query.getPointer(), 0, "Pointer is not null");
 
     }
 
@@ -20,6 +20,6 @@ public class TSQueryTest extends TestBase {
     void testInvalidQuery() throws UnsupportedEncodingException {
         TSQuery query = new TSQuery(Languages.java(), "(class_declaration");
 
-        assertEquals(query.pointer, 0, "Pointer is null");
+        assertEquals(query.getPointer(), 0, "Pointer is null");
     }
 }

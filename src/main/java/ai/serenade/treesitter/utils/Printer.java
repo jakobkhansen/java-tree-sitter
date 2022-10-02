@@ -21,10 +21,10 @@ public class Printer {
 
     public static String print(TSRange range) {
         String out = "TSInputEdit(\n";
-        out += "\nstart_byte: " + range.start_byte;
-        out += "\nend_byte: " + range.end_byte;
-        out += "\nstart_point" + print(range.start_point);
-        out += "\nend_point" + print(range.end_point);
+        out += "\nstart_byte: " + range.getStartByte();
+        out += "\nend_byte: " + range.getEndByte();
+        out += "\nstart_point" + print(range.getStartPoint());
+        out += "\nend_point" + print(range.getEndPoint());
 
         return out;
     }

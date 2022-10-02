@@ -1,8 +1,8 @@
 package ai.serenade.treesitter;
 
 public class TSQueryMatch {
-    int id;
-    int pattern_index;
+    private int id;
+    private int pattern_index;
     TSQueryCapture[] captures;
 
     public TSQueryMatch(int id, int pattern_index, TSQueryCapture[] captures) {
@@ -11,4 +11,15 @@ public class TSQueryMatch {
         this.captures = captures;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getPatternIndex() {
+        return pattern_index;
+    }
+
+    public TSQueryCapture[] getCaptures() {
+        return captures;
+    }
 }

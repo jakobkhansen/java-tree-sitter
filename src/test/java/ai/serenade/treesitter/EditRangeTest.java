@@ -6,8 +6,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.jupiter.api.Test;
 
-import ai.serenade.treesitter.utils.Printer;
-
 public class EditRangeTest extends TestBase {
 
     @Test
@@ -37,8 +35,8 @@ public class EditRangeTest extends TestBase {
             TSRange[] ranges = new_tree.getChangedRanges(tree);
             TSRange range = ranges[0];
 
-            assertEquals(40, range.start_byte, "Start byte");
-            assertEquals(98, range.end_byte, "End byte");
+            assertEquals(40, range.getStartByte(), "Start byte");
+            assertEquals(98, range.getEndByte(), "End byte");
         }
 
     }
