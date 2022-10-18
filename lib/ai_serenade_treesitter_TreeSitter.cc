@@ -52,6 +52,9 @@ static jfieldID _rangeEndPointField;
 static jfieldID _rangeStartByteField;
 static jfieldID _rangeEndByteField;
 
+// TSQueryCursor
+static jclass _queryCursorClass;
+
 // TSQueryMatch
 static jclass _queryMatchClass;
 static jfieldID _queryMatchIdField;
@@ -122,6 +125,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   _loadField(_rangeStartPointField, _rangeClass, "start_point", "Lai/serenade/treesitter/TSPoint;");
   _loadField(_rangeEndPointField, _rangeClass, "end_point", "Lai/serenade/treesitter/TSPoint;");
 
+  // TSQueryCursor
+  _loadClass(_queryCursorClass, "ai/serenade/treesitter/TSQueryCursor");
 
   // TSQueryCapture
   _loadClass(_queryCaptureClass, "ai/serenade/treesitter/TSQueryCapture");
