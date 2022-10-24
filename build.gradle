@@ -31,7 +31,7 @@ task buildSharedObject {
 }
 
 clean {
-    delete "libjava-tree-sitter.so"
+    delete "libparser.so"
 }
 
 compileJava {
