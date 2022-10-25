@@ -15,9 +15,9 @@ public class ParseTest extends TestBase {
         // System.lineSeparator()
         // + "float y = 3.0;" + System.lineSeparator() + "hello(y);" +
         // System.lineSeparator() + "}";
-        String source = "class Hello{\nint x = 3;\n\n\n\n\n\n\n\nfloat y = 3.0;\nhello(y);\n}";
+        String source = "class Hello{\nint x = 3;\n\n\n\n\n\n\n\nfloat y = 3.0;\nhello(\"y\");\n}";
         try (Parser parser = new Parser()) {
-            parser.setLanguage(Languages.python());
+            parser.setLanguage(Languages.java());
             try (Tree tree = parser.parseString(source)) {
                 Node root = tree.getRootNode();
                 traverse(root);
@@ -28,6 +28,8 @@ public class ParseTest extends TestBase {
     public static void traverse(Node node) {
         System.out.println(node.getType());
         System.out.println(print(node.toRange()));
+        System.out.println("named: " + node.isNamed());
+        System.out.println("childcount: " + node.getChildCount());
         System.out.println();
 
         for (int i = 0; i < node.getChildCount(); i++) {

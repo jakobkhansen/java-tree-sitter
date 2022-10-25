@@ -43,6 +43,10 @@ public class Node {
         return TreeSitter.nodeType(this);
     }
 
+    public boolean isNamed() {
+        return TreeSitter.nodeIsNamed(this);
+    }
+
     public TSRange toRange() {
         return new TSRange(getStartPoint(), getEndPoint(), getStartByte(), getEndByte());
     }
