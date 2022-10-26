@@ -20,41 +20,7 @@ public class ParseTest extends TestBase {
             parser.setLanguage(Languages.java());
             try (Tree tree = parser.parseString(source)) {
                 Node root = tree.getRootNode();
-                traverse(root);
             }
         }
     }
-
-    public static void traverse(Node node) {
-        System.out.println(node.getType());
-        System.out.println(print(node.toRange()));
-        System.out.println("named: " + node.isNamed());
-        System.out.println("childcount: " + node.getChildCount());
-        System.out.println();
-
-        for (int i = 0; i < node.getChildCount(); i++) {
-            traverse(node.getChild(i));
-        }
-    }
-
-    public static String print(TSPoint point) {
-        String out = "TSPoint(";
-        out += point.row + ", " + point.column + ")";
-
-        return out;
-    }
-
-    public static String print(TSRange range) {
-        if (range == null) {
-            return "TSRange(null)";
-        }
-        String out = "TSRange(";
-        out += "\nstart_byte: " + range.getStartByte();
-        out += "\nend_byte: " + range.getEndByte();
-        out += "\nstart_point: " + print(range.getStartPoint());
-        out += "\nend_point: " + print(range.getEndPoint());
-
-        return out + ")";
-    }
-
 }
