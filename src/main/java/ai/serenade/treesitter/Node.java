@@ -47,6 +47,10 @@ public class Node {
         return TreeSitter.nodeIsNamed(this);
     }
 
+    public boolean isExtra() {
+        return TreeSitter.nodeIsExtra(this);
+    }
+
     public TSRange toRange() {
         return new TSRange(getStartPoint(), getEndPoint(), getStartByte(), getEndByte());
     }

@@ -81,6 +81,14 @@ JNIEXPORT jboolean JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeIsNamed
 
 /*
  * Class:     ai_serenade_treesitter_TreeSitter
+ * Method:    nodeIsExtra
+ * Signature: (Lai/serenade/treesitter/Node;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeIsExtra
+  (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     ai_serenade_treesitter_TreeSitter
  * Method:    parserNew
  * Signature: ()J
  */

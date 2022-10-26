@@ -20,6 +20,8 @@ public class TreeSitter {
 
     public static native boolean nodeIsNamed(Node node);
 
+    public static native boolean nodeIsExtra(Node node);
+
     public static native long parserNew();
 
     public static native void parserDelete(long parser);
