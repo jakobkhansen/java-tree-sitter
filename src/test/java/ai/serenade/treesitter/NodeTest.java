@@ -36,7 +36,8 @@ public class NodeTest extends TestBase {
                 assertEquals(1, root.getEndPoint().column, "Final row should only be one wide");
 
                 assertEquals(1, root.getEndPoint().column, "Final row should only be one wide");
-                assertEquals(root.getNodeString(), firstChild.getParent().getNodeString(), "Parent of child should be root");
+                assertEquals(root.getNodeString(), firstChild.getParent().getNodeString(),
+                        "Parent of child should be root");
 
             }
         }

@@ -262,8 +262,15 @@ JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeChild(
 
 JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeParent(
   JNIEnv* env, jclass self, jobject node) {
-  return _marshalNode(
-           env, ts_node_parent(_unmarshalNode(env, node)));
+
+
+  TSNode ts_node = _unmarshalNode(env, node);
+  TSNode parent = ts_node_parent(ts_node);
+  if (ts_node_is_null(parent)) {
+    return NULL;
+  }
+
+  return _marshalNode(env, parent);
 }
 
 JNIEXPORT jint JNICALL Java_ai_serenade_treesitter_TreeSitter_nodeChildCount(
@@ -471,6 +478,7 @@ JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorExec(
 JNIEXPORT jobject JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryCursorNextMatch
   (JNIEnv * env, jclass self, jlong query_cursor) {
     TSQueryMatch query_match;
+
     bool found = ts_query_cursor_next_match((TSQueryCursor*)query_cursor, &query_match);
 
     if (!found) {

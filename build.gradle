@@ -77,6 +77,8 @@ test {
     }
 
     environment "JAVA_TREE_SITTER", "${project.projectDir.toString()}/libparser.so"
+    testLogging.showStandardStreams = true
+
 }
 
 task buildtestparser {
