@@ -4,6 +4,8 @@ public class TreeSitter {
 
     public static native Node nodeChild(Node node, int child);
 
+    public static native Node nodeParent(Node node);
+
     public static native int nodeChildCount(Node node);
 
     public static native int nodeEndByte(Node node);

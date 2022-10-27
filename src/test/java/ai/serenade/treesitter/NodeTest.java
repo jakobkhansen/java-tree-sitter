@@ -30,9 +30,13 @@ public class NodeTest extends TestBase {
             parser.setLanguage(Languages.java());
             try (Tree tree = parser.parseString("class Hello {\n}")) {
                 Node root = tree.getRootNode();
+                Node firstChild = root.getChild(0);
                 assertEquals(false, root.isExtra(), "Root node should not be extra");
                 assertEquals(true, root.isNamed(), "Root node should be named");
                 assertEquals(1, root.getEndPoint().column, "Final row should only be one wide");
+
+                assertEquals(1, root.getEndPoint().column, "Final row should only be one wide");
+                assertEquals(root.getNodeString(), firstChild.getParent().getNodeString(), "Parent of child should be root");
 
             }
         }

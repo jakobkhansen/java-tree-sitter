@@ -15,6 +15,10 @@ public class Node {
         return TreeSitter.nodeChild(this, child);
     }
 
+    public Node getParent() {
+        return TreeSitter.nodeParent(this);
+    }
+
     public int getChildCount() {
         return TreeSitter.nodeChildCount(this);
     }
