@@ -214,12 +214,12 @@ jobject _marshalTreeCursorNode(JNIEnv* env, TreeCursorNode node) {
 }
 
 // Point
-// Not sure why I need to divide by two
+// Not sure why I need to divide by two, probably because of utf-16
 jobject _marshalPoint(JNIEnv* env, TSPoint point) {
   jobject javaObject = env->AllocObject(_pointClass);
 
   env->SetIntField(javaObject, _pointRowField, point.row);
-  env->SetIntField(javaObject, _pointColumnField, point.column);
+  env->SetIntField(javaObject, _pointColumnField, point.column / 2);
   return javaObject;
 }
 
