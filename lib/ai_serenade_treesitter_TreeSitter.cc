@@ -382,9 +382,9 @@ JNIEXPORT jobjectArray JNICALL Java_ai_serenade_treesitter_TreeSitter_treeGetCha
 
 JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_treeCursorNew(
   JNIEnv* env, jclass self, jobject node) {
-  TSTreeCursor* cursor =
-    new TSTreeCursor(ts_tree_cursor_new(_unmarshalNode(env, node)));
-  return (jlong)cursor;
+  TSTreeCursor cursor = TSTreeCursor(ts_tree_cursor_new(_unmarshalNode(env, node)));
+  TSTreeCursor* ptr = &cursor;
+  return (jlong)ptr;
 }
 
 JNIEXPORT jstring JNICALL
