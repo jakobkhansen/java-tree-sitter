@@ -343,6 +343,7 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_parserParseBytes(
   JNIEnv* env, jclass self, jlong parser, jbyteArray source_bytes,
   jint length) {
   jbyte* source = env->GetByteArrayElements(source_bytes, NULL);
+  printf("%p\n" , ts_parser_language(((TSParser*) parser)));
   jlong result = (jlong)ts_parser_parse_string_encoding(
                    (TSParser*)parser, NULL, reinterpret_cast<const char*>(source), length, TSInputEncodingUTF16);
   env->ReleaseByteArrayElements(source_bytes, source, JNI_ABORT);
@@ -417,7 +418,7 @@ Java_ai_serenade_treesitter_TreeSitter_treeCursorCurrentTreeCursorNode(
 
 JNIEXPORT void JNICALL Java_ai_serenade_treesitter_TreeSitter_treeCursorDelete(
   JNIEnv* env, jclass self, jlong cursor) {
-  delete (TSTreeCursor*)cursor;
+  free((TSTreeCursor*) cursor);
 }
 
 JNIEXPORT jboolean JNICALL
@@ -458,8 +459,8 @@ JNIEXPORT jlong JNICALL Java_ai_serenade_treesitter_TreeSitter_tsQueryNew(
   const char* c_source;
   uint32_t source_length = env->GetStringLength(source);
   c_source = env->GetStringUTFChars(source, NULL);
-  uint32_t* error_offset = new uint32_t;
-  TSQueryError* error_type = new TSQueryError;
+  uint32_t* error_offset = (uint32_t*) malloc(sizeof(uint32_t));
+  TSQueryError* error_type = (TSQueryError*) malloc(sizeof(TSQueryError));
   TSQuery* query = ts_query_new((TSLanguage*) language, c_source, source_length, error_offset, error_type);
   return (jlong) query;
 }

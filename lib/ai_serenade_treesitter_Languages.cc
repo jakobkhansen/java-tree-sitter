@@ -191,6 +191,7 @@ Java_ai_serenade_treesitter_Languages_ruby(JNIEnv* env, jclass self) {
 extern "C" TSLanguage* tree_sitter_rust();
 JNIEXPORT jlong JNICALL
 Java_ai_serenade_treesitter_Languages_rust(JNIEnv* env, jclass self) {
+  printf("here %p\n", (jlong)tree_sitter_rust());
   return (jlong)tree_sitter_rust();
 }
 #endif
